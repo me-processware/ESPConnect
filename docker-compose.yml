@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  espconnect:
+    build: .
+    container_name: espconnect-flask
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
+    volumes:
+      - ./static:/app/static:ro
