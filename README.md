@@ -1,184 +1,291 @@
-# ESPConnect Flask Server
+# ESPConnect Flask - Complete Package
 
-A Flask-based web server that serves the ESPConnect Vue.js application for managing ESP32 and ESP8266 microcontrollers directly from your browser.
+**Author**: Processware  
+**Version**: 2.0.0  
+**Description**: Flask-powered ESPConnect with integrated ESP32 diagnostic tools
 
-## Overview
+---
 
-This Flask application serves the built ESPConnect frontend, which allows you to:
-- Flash firmware to ESP32/ESP8266 boards
-- Manage SPIFFS/LittleFS file systems
-- Monitor serial output
-- View device information and partitions
-- Backup and restore flash memory
+## 🚀 What's New in v2.0
 
-The application uses the Web Serial API, which requires a Chromium-based browser (Chrome, Edge, Brave, etc.).
+Complete rewrite with powerful diagnostic capabilities:
 
-## Features
+✅ **Flask Backend** - Serves ESPConnect Vue.js frontend on port 8080  
+✅ **Diagnostic API** - REST endpoints for ESP32 hardware analysis  
+✅ **Pre-compiled Firmware** - Ready-to-flash `.bin` files (ESP32, S2, S3, C3)  
+✅ **I2C Scanner** - Detect and identify connected I2C devices  
+✅ **Web Integration** - Beautiful diagnostic display in browser  
+✅ **JSON Output** - Structured data for easy parsing  
 
-- ✅ Flask backend serving static Vue.js frontend
-- ✅ Web Serial API support for direct USB communication
-- ✅ Health check endpoint for monitoring
-- ✅ Docker support for easy deployment
-- ✅ CORS headers configured for Web Serial API
-- ✅ Production-ready configuration
-- ✅ Port 8080 (avoiding default Flask 5000)
+---
 
-## Requirements
-
-- Python 3.11+
-- Flask 3.0+
-- Chromium-based browser (Chrome, Edge, Brave, Arc)
-- ESP32/ESP8266 board with USB connection
-
-## Installation
-
-### Option 1: Direct Python Installation
+## ⚡ Quick Start (3 Minutes)
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the server
+# Run server
 python app.py
+
+# Open browser → http://localhost:8080
+# Flash firmware → bin/diagnostic-esp32.bin
+# View diagnostics → Serial Monitor (115200 baud)
 ```
 
-### Option 2: Docker
+---
 
-```bash
-# Build and run with Docker
-docker build -t espconnect-flask .
-docker run -p 8080:8080 espconnect-flask
+## 📦 Package Contents
+
+```
+espconnect-flask/
+├── app.py                      # Flask server with diagnostic API
+├── static/                     # ESPConnect Vue.js frontend (9.2 MB)
+├── bin/                        # Pre-compiled diagnostic firmware (1.1 MB)
+│   ├── diagnostic-esp32.bin    # ESP32 (291 KB)
+│   ├── diagnostic-esp32-s2.bin # ESP32-S2 (250 KB)
+│   ├── diagnostic-esp32-s3.bin # ESP32-S3 (278 KB)
+│   └── diagnostic-esp32-c3.bin # ESP32-C3 (271 KB)
+├── firmware/                   # Diagnostic tool source code
+│   └── esp32-diagnostic-tool/
+│       ├── src/main.cpp        # Complete firmware (500+ lines)
+│       └── platformio.ini
+├── docs/                       # Documentation
+│   ├── INTEGRATION_GUIDE.md
+│   └── DiagnosticTab.vue
+├── Dockerfile
+├── docker-compose.yml
+└── DEPLOYMENT.md
 ```
 
-### Option 3: Docker Compose
+---
+
+## 🔥 Key Features
+
+### ESPConnect (Original)
+- Flash ESP32 firmware via browser
+- Read/write flash memory
+- Partition management
+- Serial monitor
+- File system management
+- No drivers needed
+
+### Diagnostic Tool (New!)
+- ✅ Chip info (model, cores, frequency, MAC)
+- ✅ Memory analysis (Heap, PSRAM, Flash)
+- ✅ GPIO pinout with warnings
+- ✅ **I2C scanner** with device identification
+- ✅ System info (SDK, uptime)
+- ✅ JSON output for web integration
+
+### Flask Backend (New!)
+- ✅ REST API for diagnostic data
+- ✅ CORS support
+- ✅ Health check endpoint
+- ✅ I2C device database
+- ✅ Docker ready
+
+---
+
+## 📡 Diagnostic API
+
+### POST /api/diagnostic/parse
+Parse serial output and extract JSON
+
+### GET /api/diagnostic/list
+List all stored diagnostics
+
+### GET /api/diagnostic/<device_id>
+Get specific diagnostic data
+
+### POST /api/diagnostic/upload
+Upload diagnostic JSON
+
+### DELETE /api/diagnostic/<device_id>
+Delete diagnostic data
+
+### GET /api/diagnostic/i2c-devices
+Get I2C device database
+
+**Full API docs**: `docs/INTEGRATION_GUIDE.md`
+
+---
+
+## 🔧 Flash Diagnostic Firmware
+
+### Step 1: Choose Your Board
+
+| Board | Firmware File |
+|-------|---------------|
+| ESP32 DevKit, WROOM | `bin/diagnostic-esp32.bin` |
+| ESP32-S2 | `bin/diagnostic-esp32-s2.bin` |
+| ESP32-S3 | `bin/diagnostic-esp32-s3.bin` |
+| ESP32-C3 | `bin/diagnostic-esp32-c3.bin` |
+
+### Step 2: Flash via ESPConnect
+
+1. Open **http://localhost:8080**
+2. **Connect** → Select ESP32
+3. **Flash Firmware** tab
+4. Choose `.bin` file
+5. Offset: **0x10000**
+6. Click **Program**
+
+### Step 3: View Results
+
+1. **Serial Monitor** tab
+2. Baud: **115200**
+3. Press **Reset**
+4. Copy JSON output
+
+---
+
+## 📊 Diagnostic Output Example
+
+```json
+{
+  "diagnostic_tool": {
+    "chip": {
+      "model": "ESP32",
+      "cores": 2,
+      "frequency_mhz": 240,
+      "mac_address": "24:6F:28:XX:XX:XX"
+    },
+    "memory": {
+      "heap": { "total_kb": 327, "free_kb": 298 },
+      "flash": { "size_mb": 4, "speed_mhz": 40 }
+    },
+    "i2c_scan": {
+      "devices": [
+        { "address": "0x3c", "likely": "OLED Display (SSD1306)" },
+        { "address": "0x68", "likely": "MPU6050 IMU" }
+      ]
+    }
+  }
+}
+```
+
+---
+
+## 🐳 Docker Deployment
 
 ```bash
-# Run with docker-compose
 docker-compose up -d
 ```
 
-## Usage
+Access at **http://localhost:8080**
 
-1. Start the Flask server using one of the methods above
-2. Open your Chromium browser and navigate to `http://localhost:8080`
-3. Connect your ESP32/ESP8266 board via USB
-4. Click "Connect" in the web interface
-5. Select your device from the browser's serial port dialog
-6. Start managing your ESP device!
+---
 
-## API Endpoints
+## 🌐 Production Deployment
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Serves the main application |
-| `/health` | GET | Health check endpoint |
-| `/api/info` | GET | Server information |
-| `/<path>` | GET | Serves static assets |
-
-## Configuration
-
-You can modify the following settings in `app.py`:
-
-```python
-PORT = 8080  # Change server port
-HOST = '0.0.0.0'  # Change host (0.0.0.0 = all interfaces)
-```
-
-## Production Deployment
-
-For production deployment, consider using:
-
-1. **Gunicorn** (WSGI server):
+### With Gunicorn
 ```bash
 pip install gunicorn
-gunicorn -w 4 -b 0.0.0.0:8080 app:app
+gunicorn -w 4 -b 0.0.0.0:8080 wsgi:app
 ```
 
-2. **Nginx** (reverse proxy):
+### With Nginx
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
-    
     location / {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://localhost:8080;
     }
 }
 ```
 
-3. **systemd** (service management):
-```ini
-[Unit]
-Description=ESPConnect Flask Server
-After=network.target
+**Full guide**: `DEPLOYMENT.md`
 
-[Service]
-User=www-data
-WorkingDirectory=/path/to/espconnect-flask
-ExecStart=/usr/bin/python3 /path/to/espconnect-flask/app.py
-Restart=always
+---
 
-[Install]
-WantedBy=multi-user.target
+## 🎯 Supported Boards
+
+| Board | Status |
+|-------|--------|
+| ESP32 (WROOM, DevKit) | ✅ Tested |
+| ESP32-S2 | ✅ Tested |
+| ESP32-S3 | ✅ Tested |
+| ESP32-C3 | ✅ Tested |
+| ESP32-C6 | ⚠️ Arduino support pending |
+
+---
+
+## 🌐 Browser Requirements
+
+**Chromium-based only:**
+- ✅ Chrome, Edge, Brave, Opera
+- ❌ Firefox, Safari (no Web Serial API)
+
+---
+
+## 🛠️ Build Custom Firmware
+
+```bash
+cd firmware/esp32-diagnostic-tool
+# Edit src/main.cpp
+pio run -e esp32dev
+# Binary: .pio/build/esp32dev/firmware.bin
 ```
 
-## Troubleshooting
+---
 
-### Web Serial API not available
-- Make sure you're using a Chromium-based browser (Chrome, Edge, Brave)
-- Ensure you're accessing via `http://localhost` or `https://` (not `http://0.0.0.0`)
-- Check that your browser supports Web Serial API
+## 🛠️ Troubleshooting
 
-### Device not detected
-- Verify the USB cable supports data transfer (not just charging)
-- Check that no other application is using the serial port
-- Try a different USB port
-- Install appropriate USB drivers for your ESP board
+**Can't connect:** Use Chromium browser, check USB cable  
+**Flash fails:** Hold BOOT button, check offset is 0x10000  
+**I2C empty:** Check wiring, add 4.7kΩ pull-ups  
+**API errors:** Check Flask server logs  
 
-### Connection fails
-- Hold BOOT button, press RESET, then try connecting
-- Lower the baud rate in the application settings
-- Check USB cable quality
+---
 
-## Security Considerations
+## 📚 Documentation
 
-- The Web Serial API only works over HTTPS or localhost for security
-- This server includes CORS headers required for Web Serial API
-- For production, always use HTTPS with proper SSL certificates
-- Consider adding authentication if exposing to the internet
+- `docs/INTEGRATION_GUIDE.md` - Web integration tutorial
+- `DEPLOYMENT.md` - Production deployment
+- `firmware/esp32-diagnostic-tool/FLASH_NOW.md` - Firmware guide
+- `bin/README.md` - Pre-compiled firmware docs
 
-## Extending the Application
+---
 
-The Flask backend can be extended with additional features:
+## 🔄 Version History
 
-1. **Database integration** - Store device configurations, logs
-2. **User authentication** - Multi-user support with login
-3. **REST API** - Additional endpoints for device management
-4. **WebSocket** - Real-time updates and notifications
-5. **File storage** - Cloud backup of firmware and configurations
+### v2.0.0 (December 2025)
+- Flask backend with diagnostic API
+- Pre-compiled firmware for all ESP32 variants
+- I2C scanner with device identification
+- Web integration components
+- Docker support
 
-Example API extension in `app.py`:
-```python
-@app.route('/api/devices', methods=['GET'])
-def list_devices():
-    # Your logic here
-    return {'devices': []}, 200
+### v1.0.0 (Original)
+- Vue.js frontend
+- Web Serial API
+- Flash programming
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+## 🙏 Credits
+
+- **Author**: Processware
+- **Original ESPConnect**: thelastoutpostworkshop
+- **Framework**: Flask + Vue.js + PlatformIO
+
+---
+
+## 🚀 Get Started!
+
+```bash
+git clone https://github.com/me-processware/ESPConnect.git
+cd ESPConnect
+pip install -r requirements.txt
+python app.py
+# Open http://localhost:8080
 ```
 
-## License
-
-This Flask wrapper is provided as-is. The original ESPConnect project is licensed under MIT License.
-
-## Credits
-
-- Original ESPConnect: [thelastoutpostworkshop/ESPConnect](https://github.com/thelastoutpostworkshop/ESPConnect)
-- Flask: [https://flask.palletsprojects.com/](https://flask.palletsprojects.com/)
-
-## Support
-
-For issues with:
-- **Flask server**: Check this README and Flask documentation
-- **ESPConnect functionality**: Visit the [original repository](https://github.com/thelastoutpostworkshop/ESPConnect)
-- **ESP devices**: Consult ESP32/ESP8266 documentation
+**Built with ❤️ by Processware**
