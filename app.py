@@ -177,7 +177,7 @@ def parse_diagnostic():
     except json.JSONDecodeError as e:
         return jsonify({'error': f'Invalid JSON: {str(e)}'}), 400
     except Exception as e:
-        return jsonify({'error': str(e)}'), 500
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/diagnostic/i2c-devices', methods=['GET'])
 def get_i2c_device_database():
