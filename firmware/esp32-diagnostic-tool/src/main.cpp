@@ -91,7 +91,14 @@ String scanI2C() {
 
 void setup() {
   Serial.begin(115200);
-  delay(1000);
+  
+  // Wait for serial port to be ready (especially important for ESP32-C3/S3 USB-Serial)
+  delay(2000);
+  
+  // Send ready signal
+  Serial.println("\n\n=== ESP32 Diagnostic Tool Starting ===");
+  Serial.println("Initializing...");
+  delay(500);
   
   // Start JSON output
   Serial.println("{");
@@ -244,6 +251,10 @@ void setup() {
   Serial.println("  }");
   Serial.println("}");
   Serial.println("__DIAGNOSTIC_COMPLETE__");
+  
+  // Send completion message
+  Serial.println("\n=== Diagnostic Complete ===");
+  Serial.println("You can now close the serial monitor or reset the device.");
 }
 
 void loop() {
