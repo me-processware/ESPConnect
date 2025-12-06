@@ -43,6 +43,15 @@ def favicon():
     """Serve favicon"""
     return send_from_directory(app.static_folder, 'favicon.ico')
 
+@app.route('/bin/<path:filename>')
+def serve_bin(filename):
+    """Serve diagnostic firmware files from bin folder"""
+    bin_folder = os.path.join(os.path.dirname(__file__), 'bin')
+    if os.path.exists(os.path.join(bin_folder, filename)):
+        return send_from_directory(bin_folder, filename, mimetype='application/octet-stream')
+    else:
+        return jsonify({'error': 'Firmware file not found'}), 404
+
 # CORS headers for Web Serial API
 @app.after_request
 def add_security_headers(response):
