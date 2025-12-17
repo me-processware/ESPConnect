@@ -1,12 +1,37 @@
 # ESPConnect Flask - Complete Package
 
 **Author**: Processware  
-**Version**: 2.0.0  
-**Description**: Flask-powered ESPConnect with integrated ESP32 diagnostic tools
+**Version**: 3.0.0  
+**Description**: Flask-powered ESPConnect v1.09 with integrated ESP32 diagnostic tools
 
 ---
 
-## 🚀 What's New in v2.0
+## 🚀 What's New in v3.0
+
+**Major Update: Merged with upstream ESPConnect v1.09!**
+
+### Upstream Features (v1.06-v1.09)
+✅ **Fixed flash size determination** - More reliable flash operations  
+✅ **CH340 baud auto-lower** - Automatically uses 460,800 for CH340 chips  
+✅ **Pause/Resume Serial Monitor** - Freeze output temporarily  
+✅ **More chip support** - ESP32-C2, C5, C6, C61, H2, P4, P4R3  
+✅ **Espressif documentation links** - Direct links to datasheets and TRM  
+✅ **Better USB bridge detection** - Improved hardware compatibility  
+✅ **Higher baud rates** - Faster flashing options  
+✅ **LittleFS folder navigation** - Browse folders in LittleFS  
+✅ **WebSerial_ESPTool updates** - Latest flashing improvements  
+
+### Processware Features (Preserved)
+✅ **Flask Backend** - Serves ESPConnect on port 8080  
+✅ **Diagnostic Tab** - Hardware analysis with auto-flash  
+✅ **Auto-Capture** - Automatic diagnostic data collection  
+✅ **Pre-compiled Firmware** - Ready-to-flash diagnostic bins  
+✅ **I2C Scanner** - Detect and identify I2C devices  
+✅ **REST API** - Programmatic access to diagnostics  
+
+---
+
+## 📋 What Was in v2.0
 
 Complete rewrite with powerful diagnostic capabilities:
 
