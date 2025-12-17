@@ -8,7 +8,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
 COPY app.py .
+COPY wsgi.py .
 COPY static ./static
+COPY bin ./bin
 
 # Expose port 8080
 EXPOSE 8080
