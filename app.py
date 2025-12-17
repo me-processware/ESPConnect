@@ -29,15 +29,6 @@ def index():
     """Serve the main index.html file"""
     return send_file(os.path.join(app.static_folder, 'index.html'))
 
-@app.route('/<path:path>')
-def serve_static(path):
-    """Serve static files (JS, CSS, fonts, etc.)"""
-    file_path = os.path.join(app.static_folder, path)
-    if os.path.exists(file_path):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_file(os.path.join(app.static_folder, 'index.html'))
-
 @app.route('/favicon.ico')
 def favicon():
     """Serve favicon"""
@@ -51,6 +42,15 @@ def serve_bin(filename):
         return send_from_directory(bin_folder, filename, mimetype='application/octet-stream')
     else:
         return jsonify({'error': 'Firmware file not found'}), 404
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve static files (JS, CSS, fonts, etc.) - MUST be last route"""
+    file_path = os.path.join(app.static_folder, path)
+    if os.path.exists(file_path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_file(os.path.join(app.static_folder, 'index.html'))
 
 # CORS headers for Web Serial API
 @app.after_request
