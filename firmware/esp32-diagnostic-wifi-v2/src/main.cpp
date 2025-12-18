@@ -66,8 +66,29 @@ void setup() {
   
   // Start WiFi AP
   Serial.println("Starting WiFi Access Point...");
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP(AP_SSID, AP_PASSWORD);
+  
+  // Disconnect any previous connections
+  WiFi.disconnect(true);
+  delay(100);
+  
+  // Set WiFi mode to AP
+  if (!WiFi.mode(WIFI_AP)) {
+    Serial.println("ERROR: Failed to set WiFi mode to AP!");
+    Serial.println("Retrying...");
+    delay(1000);
+    WiFi.mode(WIFI_AP);
+  }
+  
+  delay(100);
+  
+  // Start Access Point
+  if (!WiFi.softAP(AP_SSID, AP_PASSWORD)) {
+    Serial.println("ERROR: Failed to start Access Point!");
+    Serial.println("Trying with default settings...");
+    WiFi.softAP("ESP32-Diag", "12345678");
+  }
+  
+  delay(500);
   
   IPAddress IP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
